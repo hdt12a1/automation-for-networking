@@ -1,6 +1,6 @@
 ---
 
-- name: Apply the provided configuration github action
+- name: Apply the provided configuration change branch name
   hosts: R
   gather_facts: false
   connection: network_cli
