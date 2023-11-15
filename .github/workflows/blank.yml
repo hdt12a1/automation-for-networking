@@ -24,6 +24,6 @@ jobs:
         pip install ansible paramiko
         ansible-galaxy collection install cisco.ios
     - name: Run Ansible playbook
-      run: ansible-playbook -i hosts hostname.yml
+      run: ansible-playbook -i hosts -u duke -T 60 hostname.yml
       env:
         ANSIBLE_CONFIG: ./ansible.cfg
