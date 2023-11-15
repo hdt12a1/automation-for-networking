@@ -1,0 +1,14 @@
+---
+
+- name: Apply the provided configuration
+  hosts: R
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: Config hostname
+      cisco.ios.ios_hostname:
+        config:
+          hostname: R
+        state: merged
+      register: print_output
+  
