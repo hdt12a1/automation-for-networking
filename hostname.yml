@@ -1,6 +1,6 @@
 ---
 
-- name: Apply the provided configuration change branch name
+- name: Apply the provided configuration install paramiko
   hosts: R
   gather_facts: false
   connection: network_cli
