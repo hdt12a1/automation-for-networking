@@ -1,6 +1,6 @@
 ---
 
-- name: Apply the provided configuration
+- name: Apply the provided configuration github action
   hosts: R
   gather_facts: false
   connection: network_cli
