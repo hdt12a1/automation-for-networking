@@ -9,6 +9,9 @@ jobs:
   deploy:
     runs-on: [self-hosted, linux]
 
+    outputs:
+      step1Result: ${{ steps.deploy.outputs.result }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -23,20 +26,35 @@ jobs:
         python -m pip install --upgrade pip
         pip install ansible paramiko
         ansible-galaxy collection install cisco.ios
+
     - name: Run Ansible playbook
-      run: ansible-playbook -i hosts hostname.yml
-      env:
-        ANSIBLE_CONFIG: ./ansible.cfg
+      id: deploy
+      run: |
+        # Your existing Ansible playbook command
+        ansible-playbook -i hosts hostname.yml
+        echo "::set-output name=result::success"  # Set an output variable
 
   notify-discord:
     runs-on: ubuntu-latest
 
+    needs: deploy
+
     steps:
+      - name: Download deploy result
+        uses: actions/download-artifact@v2
+        with:
+          name: deploy-result
+          path: ${{ github.workspace }}
+
       - name: Send Discord Notification
         if: always()
         run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"content": "GitHub Actions Build Success!"}' \
-          ${{ secrets.DISCORD_WEBHOOK_URL }}
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          result=$(cat ${{ github.workspace }}/result.txt)
+          if [ "$result" == "success" ]; then
+            echo "GitHub Actions Build Success!"
+            curl -X POST -H "Content-Type: application/json" \
+              -d '{"content": "GitHub Actions Build Success!"}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+          else
+            echo "GitHub Actions Build Failed!"
+          fi
