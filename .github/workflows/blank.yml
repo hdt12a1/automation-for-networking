@@ -40,27 +40,24 @@ jobs:
         name: deploy-result
         path: ${{ github.workspace }}
 
-  notify-discord:
+  job-B:
     runs-on: ubuntu-latest
 
     needs: deploy
+    if: github.job == 'deploy' && github.event_name == 'push' && github.event.ref == 'refs/heads/master'
 
     steps:
-      - name: Download deploy result
-        uses: actions/download-artifact@v2
-        with:
-          name: deploy-result
-          path: ${{ github.workspace }}
-
       - name: Send Discord Notification
         if: always()
         run: |
-          result=$(cat ${{ github.workspace }}/result.txt)
-          if [ "$result" == "success" ]; then
+          if [ "${{ job.status }}" == "success" ]; then
             echo "GitHub Actions Build Success!"
             curl -X POST -H "Content-Type: application/json" \
               -d '{"content": "GitHub Actions Build Success!"}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
           else
             echo "GitHub Actions Build Failed!"
+            curl -X POST -H "Content-Type: application/json" \
+              -d '{"content": "GitHub Actions Build Failed!"}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
           fi
