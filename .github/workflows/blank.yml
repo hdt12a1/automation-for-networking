@@ -40,5 +40,5 @@ jobs:
           echo "GitHub Actions Build Status: ${{ needs.deploy.status }}"
           echo "GitHub Actions Build Conclusion: ${{ needs.deploy.conclusion }}"
           curl -X POST -H "Content-Type: application/json" \
-            -d '{"content": "GitHub Actions Build Status: ${{ needs.deploy.status }}"}' \
+            -d '{"content": "GitHub Actions Build Is Trigger: ${{ needs.deploy.status }}"}' \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
