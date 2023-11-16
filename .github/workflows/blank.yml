@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
 
     steps:
     - name: Checkout code
@@ -21,7 +21,7 @@ jobs:
     - name: Install Ansible
       run: |
         python -m pip install --upgrade pip
-        pip install ansible paramiko ansible-pylibssh
+        pip install ansible paramiko
         ansible-galaxy collection install cisco.ios
     - name: Run Ansible playbook
       run: ansible-playbook hostname.yml
