@@ -34,6 +34,12 @@ jobs:
         ansible-playbook -i hosts hostname.yml
         echo "::set-output name=result::success"  # Set an output variable
 
+    - name: Upload deploy result
+      uses: actions/upload-artifact@v2
+      with:
+        name: deploy-result
+        path: ${{ github.workspace }}
+
   notify-discord:
     runs-on: ubuntu-latest
 
