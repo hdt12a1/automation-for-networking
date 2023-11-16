@@ -1,6 +1,6 @@
 ---
 
-- name: Apply the provided configuration demo email notification
+- name: Apply the provided configuration
   hosts: R
   gather_facts: false
   connection: network_cli
