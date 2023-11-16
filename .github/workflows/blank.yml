@@ -27,3 +27,16 @@ jobs:
       run: ansible-playbook -i hosts hostname.yml
       env:
         ANSIBLE_CONFIG: ./ansible.cfg
+
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Notification
+        if: always()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "GitHub Actions Build Success!"}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
