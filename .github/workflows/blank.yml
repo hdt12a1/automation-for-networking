@@ -9,9 +9,6 @@ jobs:
   deploy:
     runs-on: [self-hosted, linux]
 
-    outputs:
-      step1Result: ${{ steps.deploy.outputs.result }}
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -28,7 +25,6 @@ jobs:
         ansible-galaxy collection install cisco.ios
 
     - name: Run Ansible playbook
-      id: deploy
       run: |
         # Your existing Ansible playbook command
         ansible-playbook -i hosts hostname.yml
@@ -37,11 +33,12 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: deploy
-    if: always() && ${{ needs.deploy.outcome == 'failure' }}
+    if: always()
     steps:
       - name: Send Discord Notification
         run: |
-          echo "GitHub Actions Build Failed!"
+          echo "GitHub Actions Build Status: ${{ needs.deploy.status }}"
+          echo "GitHub Actions Build Conclusion: ${{ needs.deploy.conclusion }}"
           curl -X POST -H "Content-Type: application/json" \
-            -d '{"content": "GitHub Actions Build Failed!"}' \
+            -d '{"content": "GitHub Actions Build Status: ${{ needs.deploy.status }}"}' \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
